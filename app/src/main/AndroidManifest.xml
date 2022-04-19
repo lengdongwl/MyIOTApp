@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.vcchb.zncgxt">
+    <!--联网-->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!--使用wifi-->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!--文件读写-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <application
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:logo="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="false"
+        android:theme="@style/AppRedTheme">
+        <activity
+            android:name=".LoginActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_home"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.HOMEPAGE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".SecondMainActivityMeterDiagram"
+            android:screenOrientation="portrait"
+            android:label="@string/title_dashboard"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.INSTRUMENTMETERDIAGRAM" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".SecondMainActivityLinesPlan"
+            android:screenOrientation="portrait"
+            android:label="@string/title_dashboard"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.INSTRUMENTLINESPLAN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ThreeMainActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_notifications"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.CONTROL" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <!--<activity-->
+            <!--android:name=".NotificationOpenActivity"-->
+            <!--android:screenOrientation="portrait"-->
+            <!--android:label="@string/title_dashboard"-->
+            <!--android:windowSoftInputMode="stateAlwaysHidden|adjustPan">-->
+        <!--</activity>-->
+        <activity
+            android:name=".WarnActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_warn"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.WARN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+<!--        <service
+            android:name=".WarnActivity"
+            android:exported="false"></service>-->
+    </application>
+
+</manifest>

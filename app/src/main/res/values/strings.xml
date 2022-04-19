@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">智能物联传感</string>
+    <string name="title_home">主页</string>
+    <string name="title_dashboard">仪表页</string>
+    <string name="title_notifications">控制页</string>
+    <string name="title_warn">警告</string>
+    <string name="serversip">服务器</string>
+    <string name="portnumber">端口号</string>
+    <string name="password">密码</string>
+    <!--服务器ip、端口号和密码-->
+    <string name="serversiptext">110.40.223.237</string>
+    <string name="portnumbertext">8081</string>
+    <string name="passwordtext">默认密码</string>
+
+</resources>

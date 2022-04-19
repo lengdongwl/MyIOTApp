@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--圆形统计View-->
+    <declare-styleable name="CircleStatisticalView">
+        <!--圆圈背景颜色-->
+        <attr name="circleBackgroundColor" format="color" />
+        <!--圆点边距-->
+        <attr name="dotMargin" format="dimension" />
+        <!--圆点半径-->
+        <attr name="dotRadius" format="dimension" />
+        <!--标记线处X差值-->
+        <attr name="lineGapX" format="dimension" />
+        <!--标记线处Y差值-->
+        <attr name="lineGapY" format="dimension" />
+        <!--标记线文字和线的间距-->
+        <attr name="lineNearTextMargin" format="dimension" />
+        <!--标记线粗细-->
+        <attr name="lineStrokeWidth" format="dimension" />
+        <!--标记文字大小-->
+        <attr name="markTextSize" format="dimension" />
+        <!--标记文字颜色-->
+        <attr name="markTextColor" format="color" />
+        <!--是否使用动画-->
+        <attr name="isUseAnimation" format="boolean" />
+        <!--动画持续时间-->
+        <attr name="animationDuration" format="integer" />
+    </declare-styleable>
+    <!-- 仪表盘自定义属性 -->
+    <declare-styleable name="DashboardView">
+        <attr name="color_dial_lower" format="color" />
+        <attr name="color_dial_middle" format="color" />
+        <attr name="color_dial_high" format="color" />
+        <attr name="text_size_dial" format="dimension" />
+        <attr name="stroke_width_dial" format="dimension" />
+        <attr name="radius_circle_dial" format="dimension" />
+        <attr name="text_title_dial" format="string" />
+        <attr name="text_title_size" format="dimension" />
+        <attr name="text_title_color" format="color" />
+        <attr name="text_size_value" format="dimension" />
+        <attr name="animator_play_time" format="integer" />
+    </declare-styleable>
+
+
+
+</resources>

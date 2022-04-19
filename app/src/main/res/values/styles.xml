@@ -1,0 +1,24 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+    <style name="AppRedTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
+
+        <!--Appbar背景色-->
+        <item name="colorPrimary">@color/colorRedPrimary</item>
+        <!--状态栏颜色-->
+        <item name="colorPrimaryDark">@color/colorRedPrimaryDark</item>
+        <!--控制各个控件被选中时的颜色-->
+        <item name="colorAccent">@color/fourthColor</item>
+        <!--ToolBar上的Title颜色-->
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <!--各个控制控件的默认颜色-->
+        <item name="android:colorControlNormal">@color/colorControlNormal</item>
+    </style>
+
+</resources>

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".SecondMainActivityMeterDiagram">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+        <Button
+            android:id="@+id/navigation_home"
+            android:background="@drawable/button_select"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="100dp"
+            app:layout_constraintRight_toLeftOf="@+id/navigation_dashboard"
+            />
+        <Button
+            android:id="@+id/navigation_dashboard"
+            android:background="@drawable/button_select"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginBottom="5dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            />
+        <Button
+            android:id="@+id/navigation_notifications"
+            android:background="@drawable/button_select"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="100dp"
+            app:layout_constraintLeft_toRightOf="@+id/navigation_dashboard"
+            />
+
+    </LinearLayout>
+
+    <view
+        class="com.vcchb.zncgxt.DashboardView"
+        android:id="@+id/SCanvas2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="20dp"
+        android:paddingLeft="150dp"
+        android:paddingRight="150dp"
+        app:markTextSize="15sp"
+        app:markTextColor="@color/colorAccent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+    <view
+        class="com.vcchb.zncgxt.DashboardView"
+        android:id="@+id/SCanvas3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="300dp"
+        android:paddingLeft="150dp"
+        android:paddingRight="150dp"
+        app:markTextSize="15sp"
+        app:markTextColor="@color/colorAccent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SCanvas2"
+        />
+
+
+
+    <TextView
+        android:id="@+id/chufang"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="580dp"
+        android:paddingLeft="278dp"
+        android:text="厨房"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="20dp" />
+
+
+
+    <SeekBar
+        android:id="@+id/Canseekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:progress="0"
+        android:layout_marginBottom="160dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        />
+    <Button
+        android:id="@+id/Sbu1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="卧室"
+        android:textColor="@color/textColorPrimary"
+        android:background="@drawable/acback"
+        android:textSize="20dp"
+        android:layout_marginBottom="80dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="@+id/Sbu2"
+        />
+
+    <Button
+        android:id="@+id/Sbu2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="厨房"
+        android:textColor="@color/textColorPrimary"
+        android:background="@drawable/acback"
+        android:textSize="20dp"
+        android:layout_marginBottom="80dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        />
+    <Button
+        android:id="@+id/Sbu3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="厕所"
+        android:textColor="@color/textColorPrimary"
+        android:background="@drawable/acback"
+        android:textSize="20dp"
+        android:layout_marginBottom="80dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="@+id/Sbu2"
+        />
+
+    <Switch
+        android:id="@+id/transmit_way"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/textColorPrimary"
+        android:background="@drawable/acback"
+        android:text="五分钟"
+        android:textSize="15sp"
+        android:layout_marginBottom="80dp"
+        android:layout_marginRight="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/Sbu1"
+        />
+
+    <Button
+        android:id="@+id/transmit_way2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/textColorPrimary"
+        android:background="@drawable/acback"
+        android:text=" 折线图"
+        android:textSize="15sp"
+        android:layout_marginBottom="80dp"
+        android:layout_marginLeft="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/Sbu3"
+        />
+</android.support.constraint.ConstraintLayout>
