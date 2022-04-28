@@ -268,6 +268,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         mTextMessage.setText("服务器重新连接中...");
                         myServer.connect();//重新连接Socket
                         if (myServer.send(password)) { //发送安卓端连接密钥
+
                             Log.e("SocketService", "TCP服务器连接成功");
                             Log.d("SocketService", "send message to cilent ok");
                             TCP_connection_status = 1;
@@ -449,6 +450,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     public void CheckData1(String TCPReadData) throws IOException {
+        //csv.setBackgroundResource(R.drawable.acback18);设置背景图
         thismessage_sent = message_sent;//获取指令码
         thisMS_serial_number  = MS_serial_number;//1.卧室 2.厨房 3.厕所当前页面索引
         if(myServer.send(thismessage_sent)){ //向服务器发送指令
@@ -673,7 +675,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                             //Warning[0] >0设置危险背景色 <0安全
                             if (Warning[0] > 0) {
-                                csv.setMarkTextColor(0x9FFF4081);
+                                csv.setMarkTextColor(0x9FFF4081);//设置字体颜色
                             } else {
                                 csv.setMarkTextColor(0x9F92e6ed);
                             }
