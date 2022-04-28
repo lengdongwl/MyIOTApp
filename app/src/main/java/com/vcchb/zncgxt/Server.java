@@ -1,18 +1,14 @@
 package com.vcchb.zncgxt;
 
 import android.util.Log;
-
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.lang.reflect.Array;
-import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.ArrayList;
+
 
 class Server {
     private  String IP = "";
@@ -63,6 +59,7 @@ class Server {
     {
         try
         {
+            close();
             isConnected=true;
             TCP = new Socket(InetAddress.getByName(IP), PORT);
             BUF = new BufferedReader(new InputStreamReader(TCP.getInputStream()));

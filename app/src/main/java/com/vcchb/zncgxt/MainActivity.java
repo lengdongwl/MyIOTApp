@@ -264,8 +264,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
 
                     try {
-                        myServer.connect();//重新连接
+                        MainActivity.LinkFlag = 0;
                         mTextMessage.setText("服务器重新连接中...");
+                        myServer.connect();//重新连接Socket
+                        if (myServer.send(password)) { //发送安卓端连接密钥
+                            Log.e("SocketService", "TCP服务器连接成功");
+                            Log.d("SocketService", "send message to cilent ok");
+                            TCP_connection_status = 1;
+                            LinkFlag = 2;
+                        }
+
                     } catch (Exception e) {
                         Log.e(TAG, "服务器重新连接异常"+e.toString());
                         mTextMessage.setText("服务器重新连接异常");
@@ -566,58 +574,59 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         static String[] markBottomB = {"温度", "湿度", "烟雾", "气体", "火焰"};
         static String[] markBottomC = {"温度", "湿度", "空气" };
         */
-        HashMap<String,String> cmdData = cmdGetValue(data);//使用cmdData.get()未重写equals，尽量用==不要用.equals，防止空指针闪退
-        if (cmdData.get("Add")!=null)//判断包
-        {
-            try {
-                switch (thisMS_serial_number) {
-
-                    case 1:
-                        if (cmdData.get("Add").equals("0xAA")) {
-                            markTop[0] = cmdData.get("Wd");//传感器指标数据
-                            markTop[1] = cmdData.get("Sd");
-                            markTop[2] = cmdData.get("Yw");
-                            markTop[3] = cmdData.get("Kq");
-                            markTop[4] = cmdData.get("Rt").equals("0") ? "无人" : "有人";
-                            lamp[0] = Integer.parseInt(Extractstr(cmdData.get("D")));//lamp[0] [1] [2] 卧室，厨房，厕所的灯亮灭状态
-                            alarm = Integer.parseInt(cmdData.get("alarm"));//警报
-                            curtain = Integer.parseInt(cmdData.get("Cl"));//窗帘
-                            receivedataTime=cmdData.get("Time");
-                            IOT = cmdData.get("IOT").equals("1");//MCU设置在线状态
-                        }
-                        break;
-                    case 2:
-                        if (cmdData.get("Add").equals("0xBB")) {
-                            markTop[0] = cmdData.get("Wd");
-                            markTop[1] = cmdData.get("Sd");
-                            markTop[2] = cmdData.get("Yw");
-                            markTop[3] = cmdData.get("Qt");
-                            markTop[4] = cmdData.get("Hy");
-                            lamp[1] = Integer.parseInt(Extractstr(cmdData.get("D")));
-                            alarm = Integer.parseInt(cmdData.get("alarm"));//警报
-                            curtain = Integer.parseInt(cmdData.get("Cl"));//窗帘
-                            receivedataTime=cmdData.get("Time");
-                            IOT = cmdData.get("IOT").equals("1");//MCU设置在线状态
-                        }
-                        break;
-                    case 3:
-                        if (cmdData.get("Add").equals("0xCC")) {
-                            markTop[0] = cmdData.get("Wd");
-                            markTop[1] = cmdData.get("Sd");
-                            markTop[2] = cmdData.get("Kq");
-                            lamp[2] = Integer.parseInt(Extractstr(cmdData.get("D")));
-                            alarm = Integer.parseInt(cmdData.get("alarm"));//警报
-                            curtain = Integer.parseInt(cmdData.get("Cl"));//窗帘
-                            receivedataTime=cmdData.get("Time");
-                            IOT = cmdData.get("IOT").equals("1");//MCU设置在线状态
-                        }
-                        break;
-                }
-
-
-            }catch (Exception e)
+        if (data.indexOf("]Over")-data.indexOf("Begin[")>0) { //判断包类型
+            HashMap<String, String> cmdData = cmdGetValue(data);//使用cmdData.get()未重写equals，尽量用==不要用.equals，防止空指针闪退
+            if (cmdData.get("Add")!=null)//判断包
             {
-                Log.e(TAG, "UI_data_func: "+e);
+                try {
+                    switch (thisMS_serial_number) {
+
+                        case 1:
+                            if (cmdData.get("Add").equals("0xAA")) {
+                                markTop[0] = cmdData.get("Wd");//传感器指标数据
+                                markTop[1] = cmdData.get("Sd");
+                                markTop[2] = cmdData.get("Yw");
+                                markTop[3] = cmdData.get("Kq");
+                                markTop[4] = cmdData.get("Rt").equals("0") ? "无人" : "有人";
+                                lamp[0] = Integer.parseInt(Extractstr(cmdData.get("D")));//lamp[0] [1] [2] 卧室，厨房，厕所的灯亮灭状态
+                                alarm = Integer.parseInt(cmdData.get("alarm"));//警报
+                                curtain = Integer.parseInt(cmdData.get("Cl"));//窗帘
+                                receivedataTime = cmdData.get("Time");
+                                IOT = cmdData.get("IOT").equals("1");//MCU设置在线状态
+                            }
+                            break;
+                        case 2:
+                            if (cmdData.get("Add").equals("0xBB")) {
+                                markTop[0] = cmdData.get("Wd");
+                                markTop[1] = cmdData.get("Sd");
+                                markTop[2] = cmdData.get("Yw");
+                                markTop[3] = cmdData.get("Qt");
+                                markTop[4] = cmdData.get("Hy");
+                                lamp[1] = Integer.parseInt(Extractstr(cmdData.get("D")));
+                                alarm = Integer.parseInt(cmdData.get("alarm"));//警报
+                                curtain = Integer.parseInt(cmdData.get("Cl"));//窗帘
+                                receivedataTime = cmdData.get("Time");
+                                IOT = cmdData.get("IOT").equals("1");//MCU设置在线状态
+                            }
+                            break;
+                        case 3:
+                            if (cmdData.get("Add").equals("0xCC")) {
+                                markTop[0] = cmdData.get("Wd");
+                                markTop[1] = cmdData.get("Sd");
+                                markTop[2] = cmdData.get("Kq");
+                                lamp[2] = Integer.parseInt(Extractstr(cmdData.get("D")));
+                                alarm = Integer.parseInt(cmdData.get("alarm"));//警报
+                                curtain = Integer.parseInt(cmdData.get("Cl"));//窗帘
+                                receivedataTime = cmdData.get("Time");
+                                IOT = cmdData.get("IOT").equals("1");//MCU设置在线状态
+                            }
+                            break;
+                    }
+
+
+                } catch (Exception e) {
+                    Log.e(TAG, "UI_data_func: " + e);
+                }
             }
         }
 
@@ -785,36 +794,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //类似以下的字符传解析成hashmap
-    // "Begin[ Add:0xBB Wd:23 SD: Hy:10 Qt:10 Yw:10 Kq:10 Rt:3 Cl:2 D:1 ]Over";
+    // "Begin[ Add:0xAA Wd:0 Sd:0 Hy:0 Qt:0 Yw:0 Kq:0 Rt:0 Cl:0 D:0 alarm:0 IOT:0 Time:2022-04-28 15:23:29 ]Over";
     public HashMap<String,String> cmdGetValue(String data) {
         HashMap<String, String> databuf = new HashMap<String, String>();
-
-        String tempbuf[] = data.split(" ");//分割字符串
-        if (tempbuf[0].equals("Begin[") && tempbuf[tempbuf.length - 1].equals("]Over")) //判断包头包尾是否匹配
-        {
-            boolean after = false;//是否取尾部
-            for (int i = 1; i < tempbuf.length - 1; i++) {
-                after = false;//是否开始读取:后的数据
-                StringBuilder key = new StringBuilder();
-                StringBuilder value = new StringBuilder();
-                for (int j = 0; j < tempbuf[i].length(); j++) {
-                    if (tempbuf[i].charAt(j) != ':') {
-                        if (after) {
-                            value.append(tempbuf[i].charAt(j));
+        try {
+            String Time = data.substring(data.indexOf("Time:")+5, data.indexOf(" ]Over")); //由于时间有空格会被分割所以这里单独截取时间
+            String tempbuf[] = data.split(" ");//分割字符串
+            if (tempbuf[0].equals("Begin[") && tempbuf[tempbuf.length - 1].equals("]Over")) //判断包头包尾是否匹配
+            {
+                boolean after = false;//是否取尾部
+                for (int i = 1; i < tempbuf.length - 1; i++) {
+                    after = false;//是否开始读取:后的数据
+                    StringBuilder key = new StringBuilder();
+                    StringBuilder value = new StringBuilder();
+                    for (int j = 0; j < tempbuf[i].length(); j++) {
+                        if (tempbuf[i].charAt(j) != ':') {
+                            if (after) {
+                                value.append(tempbuf[i].charAt(j));
+                            } else {
+                                key.append(tempbuf[i].charAt(j));
+                            }
                         } else {
-                            key.append(tempbuf[i].charAt(j));
+                            after = true;
                         }
-                    } else {
-                        after = true;
+                    }
+                    if (value.length() != 0) {
+                        databuf.put(key.toString(), value.toString());//将解析结果加入hashmap
+                    } else //若value为空 默认给0
+                    {
+                        databuf.put(key.toString(), "0");
                     }
                 }
-                if (value.length() != 0) {
-                    databuf.put(key.toString(), value.toString());//将解析结果加入hashmap
-                } else //若value为空 默认给0
-                {
-                    databuf.put(key.toString(), "0");
-                }
             }
+            databuf.put("Time",Time);
+        }catch (Exception e)
+        {
+            Log.e(TAG, "cmdGetValue: ",e );
         }
         return databuf;
     }
