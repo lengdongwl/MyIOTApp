@@ -1,5 +1,6 @@
 package com.vcchb.zncgxt;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -67,6 +69,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public static int background_animation_switch = 1;//0.关闭动画 1.开启动画
     public static Server myServer = null;//TCP服务器操作
+    public static Thread myServerThread = null;//TCP服务器线程
+    public static Boolean myServerFlag = false;//TCP服务器线程
     public static String TAG = "SocketService";//Debug标志
 
     static Intent homepage_intent = new Intent("android.intent.action.HOMEPAGE");//Activity intent 用于界面切换
@@ -159,14 +163,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             switch (which)
             {
                 case AlertDialog.BUTTON_POSITIVE:// "确认"按钮退出程序
-                    try {
-                        TCP_reconnect = false;//跳出循环 取消重连
-                        myServer.close();//关闭服务器资源
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    dialog.cancel();//关闭按钮
                     finish();
+                    TCPClose();
                     break;
                 case AlertDialog.BUTTON_NEGATIVE:// "取消"第二个按钮取消对话框
                     break;
@@ -175,6 +174,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     };
+
+    public void TCPClose()
+    {
+        try {
+
+            TCP_reconnect = false;//跳出循环 取消重连
+            while(myServerFlag);//等待线程关闭
+            myServer.close();//关闭服务器资源
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void Initialize(){
         setContentView(R.layout.activity_main);
@@ -246,10 +258,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int thisMS_serial_number = 0;
 
     public void SocketThread(){
-        new Thread(new Runnable(){
+        myServerFlag = true; //开启线程标志
+        myServerThread = new Thread(new Runnable(){
             @Override
             public void run(){
-
                 while (TCP_reconnect) {
 
                     if (myServer.isConnected()) { //连接成功
@@ -262,12 +274,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 Log.d(TAG, msg);
                                 CheckData1(msg);//解析处理数据函数
                                 ReceiveDatalen++;//统计接收包数
-
                                 Thread.sleep(1000);
                             }
 
-                        } catch (IOException | InterruptedException e) {
-                            Log.e(TAG, e.toString());
+                        } catch (Exception e) {
+                            Log.e(TAG, "SocketThread:",e);
                         }
                     }
 
@@ -277,32 +288,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             mTextMessage.setText("服务器重新连接中...");
                             myServer.connect();//重新连接Socket
                             if (myServer.send(password)) { //发送安卓端连接密钥
-
                                 Log.e("SocketService", "TCP服务器连接成功");
                                 Log.d("SocketService", "send message to cilent ok");
                                 TCP_connection_status = 1;
-                                //LinkFlag = 2;
                             }
                         }
 
                     } catch (Exception e) {
-                        Log.e(TAG, "服务器重新连接异常"+e.toString());
-                        mTextMessage.setText("服务器重新连接异常");
-                        TCP_connection_status = 0;
+                        if (e.toString()!="java.lang.InterruptedException") {
+                            Log.e(TAG, "服务器重新连接异常" + e.toString());
+                            mTextMessage.setText("服务器重新连接异常");
+                            TCP_connection_status = 0;
+                        }
                     }
 
-                    //3s防止断开socket刷新太快 单独捕获异常
+                    //1s防止断开socket刷新太快 单独捕获异常
                     try {
-                        Thread.sleep(3000);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, "SocketThread:",e);
+                        break;
                     }
-
-
                 }
+                myServerFlag = false;//关闭线程标志
 
             }
-        }).start();
+        });
+        myServerThread.start();//开启线程
     }
 
 
@@ -442,6 +454,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         return str;
     }
+
+
     public String SafeState(String str){
 
         switch(Integer.parseInt(str)){
@@ -472,110 +486,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         UI_home_func();//若主页面UI处理
 
     }
-
-
-
-    public void CheckData(String TCPReadData) throws IOException {
-
-
-
-        thismessage_sent = message_sent;
-        thisMS_serial_number  = MS_serial_number;
-        myServer.send(thismessage_sent);
-        if (!TCPReadData.equals("OK12OK12")) {
-            System.out.println(TCPReadData);
-            StringTokenizer st = new StringTokenizer(TCPReadData, "#");
-            String[] str = new String[st.countTokens()];
-            int i = 0;
-            while (st.hasMoreTokens()) {
-                str[i] = st.nextToken();
-                i++;
-            }
-
-            switch (alarm) {
-                case 0x01://AA
-                    alarm_contrast_information = "cmd tempA";
-                    message_sent = alarm_contrast_information;
-                    ACI_serial_number = 1;
-                    MS_serial_number = ACI_serial_number;
-                    break;
-                case 0x02://BB
-                    alarm_contrast_information = "cmd tempB";
-                    message_sent = alarm_contrast_information;
-                    ACI_serial_number = 2;
-                    MS_serial_number = ACI_serial_number;
-                    break;
-                case 0x04://CC
-                    alarm_contrast_information = "cmd tempC";
-                    message_sent = alarm_contrast_information;
-                    ACI_serial_number = 3;
-                    MS_serial_number = ACI_serial_number;
-                    break;
-                case 0x03://AABB
-                    alarm_contrast_information = "cmd tempAB";
-                    ACI_serial_number = 4;
-                    break;
-                case 0x05://AACC
-                    alarm_contrast_information = "cmd tempAB";
-                    ACI_serial_number = 5;
-                    break;
-                case 0x06://BBCC
-                    alarm_contrast_information = "cmd tempBC";
-                    ACI_serial_number = 6;
-                    break;
-                case 0x07://AABBCC
-                    alarm_contrast_information = "cmd tempABC";
-                    ACI_serial_number = 7;
-                    break;
-            }
-        }
-
-        SendDatalen = SendDatalen + thismessage_sent.length();
-        ReceiveDatalen = ReceiveDatalen + TCPReadData.length();
-        try {
-            StringTokenizer st = new StringTokenizer(TCPReadData, "#");
-            String[] str = new String[st.countTokens()];
-            if (str[0].equals("Time:")&&str[2].equals("Begin")) {
-                //Threedata = str[1];
-               // Threedata_flag = 1;
-            }
-        }catch (Exception e){
-        }
-        for(int j=0;j<3;j++){
-            if (Warning[j] > 0) {
-                if (Activitystate == 0) {
-                    Activitystate = 2;
-                    Log.i("open","edjd");
-                    startActivity(warn_intent);
-                    Warning[j] = 0;
-                    rememberbox2.setChecked(false);
-
-                }
-            } else {
-            }
-        }
-
-
-
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (background_animation_switch==1) {
-                    vieNum += 3;
-                    Others.BackgroundAnimation(vie, vieNum);
-                }
-                if(vieNum>600){
-                    vieNum = 0;
-                }
-            }
-        });
-        //Thread.sleep(50);
-        TCP_connection_status = 2;
-        TCP_connection_status = 3;
-
-    }
-
 
 
     public void UI_data_func(String data) {

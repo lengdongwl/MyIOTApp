@@ -203,11 +203,11 @@ public class ThreeMainActivity extends AppCompatActivity implements View.OnClick
                     for (int i =0;i<200;i++) {
                         if (MainActivity.TCP_connection_status==3) {
                             if (MainActivity.lamp[0] == 0) {
-                                MainActivity.dos.writeBytes("cmd AopenDeng");
-                                MainActivity.dos.flush();
+                                MainActivity.myServer.send("cmd AopenDeng");
+                                
                             } else {
-                                MainActivity.dos.writeBytes("cmd AcloseDeng");
-                                MainActivity.dos.flush();
+                                MainActivity.myServer.send("cmd AcloseDeng");
+                                
                             }
                             break;
                         }
@@ -221,11 +221,11 @@ public class ThreeMainActivity extends AppCompatActivity implements View.OnClick
                     for (int i =0;i<200;i++) {
                         if (MainActivity.TCP_connection_status==3) {
                             if (MainActivity.lamp[1] == 0) {
-                                MainActivity.dos.writeBytes("cmd BopenDeng");
-                                MainActivity.dos.flush();
+                                MainActivity.myServer.send("cmd BopenDeng");
+                                
                             } else {
-                                MainActivity.dos.writeBytes("cmd BcloseDeng");
-                                MainActivity.dos.flush();
+                                MainActivity.myServer.send("cmd BcloseDeng");
+                                
                             }
                             break;
                         }
@@ -239,11 +239,11 @@ public class ThreeMainActivity extends AppCompatActivity implements View.OnClick
                     for (int i =0;i<200;i++) {
                         if (MainActivity.TCP_connection_status==3) {
                             if (MainActivity.lamp[2] == 0) {
-                                MainActivity.dos.writeBytes("cmd CopenDeng");
-                                MainActivity.dos.flush();
+                                MainActivity.myServer.send("cmd CopenDeng");
+                                
                             } else {
-                                MainActivity.dos.writeBytes("cmd CcloseDeng");
-                                MainActivity.dos.flush();
+                                MainActivity.myServer.send("cmd CcloseDeng");
+                                
                             }
                             break;
                         }
@@ -255,9 +255,9 @@ public class ThreeMainActivity extends AppCompatActivity implements View.OnClick
             case R.id.transmit_way1:
                 try {
                     for (int i =0;i<200;i++) {
-                        if (MainActivity.TCP_connection_status == 3) {
-                            MainActivity.dos.writeBytes("cmd CServerClear");
-                            MainActivity.dos.flush();
+                        if (MainActivity.root) {
+                            MainActivity.myServer.send("cmd CServerClear");
+                            
                             break;
                         }
                         Thread.sleep(1);
@@ -266,7 +266,7 @@ public class ThreeMainActivity extends AppCompatActivity implements View.OnClick
                 }
                 break;
             case R.id.transmit_way2:
-//                try {
+
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setTitle("请输入自定义指令");
                     // 通过LayoutInflater来加载一个xml的布局文件作为一个View对象
@@ -284,16 +284,19 @@ public class ThreeMainActivity extends AppCompatActivity implements View.OnClick
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     //确定操作的内容
-                                    try {
-                                    for (int i =0;i<200;i++) {
-                                        if (MainActivity.TCP_connection_status == 3) {
-                                            MainActivity.dos.writeBytes(String.valueOf(username.getText()));
-                                            MainActivity.dos.flush();
-                                            break;
-                                        }
-                                        Thread.sleep(1);
-                                    }
-                                    } catch (Exception e) {
+                                    if (MainActivity.root) {
+                                        new Thread()
+                                        {
+                                            @Override
+                                            public void run() {
+                                                try {
+                                                    MainActivity.myServer.send(username.getText().toString());
+                                                }catch (IOException e)
+                                                {
+                                                    Log.e(MainActivity.TAG, "onClick: ",e);
+                                                }
+                                            }
+                                        }.start();
                                     }
                                 }
                             });
@@ -308,10 +311,7 @@ public class ThreeMainActivity extends AppCompatActivity implements View.OnClick
                                 }
                             });
                     builder.show();
-                    //MainActivity.dos.writeBytes("cmd CServerClear");
-                    //MainActivity.dos.flush();
-//                }catch (Exception e){
-//                }
+
                 break;
             case R.id.navigation_home:
                 onClickButton_home(v);
@@ -429,9 +429,9 @@ public class ThreeMainActivity extends AppCompatActivity implements View.OnClick
                         }else {
                             try {
                                 for (int i = 0; i < 200; i++) {
-                                    if (MainActivity.TCP_connection_status == 3) {
-                                        MainActivity.dos.writeBytes("cmd curtain000");
-                                        MainActivity.dos.flush();
+                                    if (MainActivity.root) {
+                                        MainActivity.myServer.send("cmd curtain000");
+                                        
                                         break;
                                     }
                                 }
@@ -446,9 +446,9 @@ public class ThreeMainActivity extends AppCompatActivity implements View.OnClick
                         }else {
                             try {
                                 for (int i = 0; i < 200; i++) {
-                                    if (MainActivity.TCP_connection_status == 3) {
-                                        MainActivity.dos.writeBytes("cmd curtain025");
-                                        MainActivity.dos.flush();
+                                    if (MainActivity.root) {
+                                        MainActivity.myServer.send("cmd curtain025");
+                                        
                                         break;
                                     }
                                 }
@@ -463,9 +463,9 @@ public class ThreeMainActivity extends AppCompatActivity implements View.OnClick
                         }else {
                             try {
                                 for (int i = 0; i < 200; i++) {
-                                    if (MainActivity.TCP_connection_status == 3) {
-                                        MainActivity.dos.writeBytes("cmd curtain050");
-                                        MainActivity.dos.flush();
+                                    if (MainActivity.root) {
+                                        MainActivity.myServer.send("cmd curtain050");
+                                        
                                         break;
                                     }
                                 }
@@ -480,9 +480,9 @@ public class ThreeMainActivity extends AppCompatActivity implements View.OnClick
                         }else {
                             try {
                                 for (int i = 0; i < 200; i++) {
-                                    if (MainActivity.TCP_connection_status == 3) {
-                                        MainActivity.dos.writeBytes("cmd curtain075");
-                                        MainActivity.dos.flush();
+                                    if (MainActivity.root) {
+                                        MainActivity.myServer.send("cmd curtain075");
+                                        
                                         break;
                                     }
                                 }
@@ -497,9 +497,9 @@ public class ThreeMainActivity extends AppCompatActivity implements View.OnClick
                         }else {
                             try {
                                 for (int i = 0; i < 200; i++) {
-                                    if (MainActivity.TCP_connection_status == 3) {
-                                        MainActivity.dos.writeBytes("cmd curtain100");
-                                        MainActivity.dos.flush();
+                                    if (MainActivity.root) {
+                                        MainActivity.myServer.send("cmd curtain100");
+                                        
                                         break;
                                     }
                                 }

@@ -211,13 +211,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         Log.d("SocketService", "send message to cilent ok");
                         MainActivity.TCP_connection_status = 1;
                         MainActivity.TCP_reconnect = true;
-                        //MainActivity.LinkFlag = 1;
                         MainActivity.myServer = myServer;
-                        //MainActivity.TCP = TCP;
                         Thread.sleep(1000);//延迟效果才看得见显示内容
                         dialogShow("服务器连接成功...");
                         myServer = null;
-                        //TCP = null;
+
                         Thread.sleep(1000);
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));//切换活动窗口
                     }
