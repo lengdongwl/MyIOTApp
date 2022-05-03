@@ -33,29 +33,15 @@ import java.util.StringTokenizer;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     public static long SendDatalen=0;//发送数据统计
     public static long ReceiveDatalen=0;//接收统计
-    public static String serversip="110.40.223.237";
-    public static int portnumber=8081;
-    public static String password="Q1830011741";
-    public static boolean root=false;
-    public static String message_sent = "cmd tempA";
-    public static int MS_serial_number = 1;
-    public static String alarm_contrast_information = "";
-    public static int ACI_serial_number = 0;
-    public static Button button1;
-    public static Button button2;
-    public static Button button3;
-    public static Button button4;
-    public static Button button5;
-    public static Button buttonselecthome;
-    public static Button buttonselectinstrument;
-    public static Button buttonselectcontrol;
-    public static int TCP_connection_status = 0;
-    public static String title="主页";
-    static Intent homepage_intent = new Intent("android.intent.action.HOMEPAGE");
-    static Intent instrument_intent = new Intent("android.intent.action.INSTRUMENTLINESPLAN");
-    static Intent instrument_intent2 = new Intent("android.intent.action.INSTRUMENTMETERDIAGRAM");
-    static Intent control_intent = new Intent("android.intent.action.CONTROL");
-    static Intent warn_intent = new Intent("android.intent.action.WARN");
+    public static String serversip="110.40.223.237";//服务器ip
+    public static int portnumber=8081;//服务器端口
+    public static String password="Q1830011741";//连接服务器Android的key
+    public static boolean root=false;//管理模式
+    public static String message_sent = "cmd tempA";//连接状态下自动向服务器发送的指令
+    public static int MS_serial_number = 1;//1.卧室 2.厨房 3.厕所当前页面索引
+    public static int TCP_connection_status = 0; //0.未连接  1.普通连接 3.root连接
+    public static boolean TCP_reconnect = true; //是否开启重新连接模式
+    public static String title="主页";//标题
     CircleStatisticalView csv;
     List<StatisticalItem> list;
     float total = 1F,total2=1F,total3=1F,total4=1F,total5=1F;
@@ -69,25 +55,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     static int[] Warning = {0,0,0};
     static int[] lamp = {0,0,0};
     static int[] lamp_of_instructions = {0,0,0};
-    static boolean IOT = false;
-    static int curtain = 0;
-    public TextView mTextMessage;
-    public TextView mTextMessage2;
-    public static int LinkFlag=0;
+    static boolean IOT = false;//IOT设备状态
+    static int curtain = 0;//窗帘百分比
+
+    //public static int LinkFlag=0;
     //public static String TCPReadData= null;
-    public static int Activitystate = 0;
+    public static int Activitystate = 0;//0.关闭 1.启动报警
     public View vie;
     public static int vieNum=0;
-    public int alarm=0;
-    private CheckBox rememberbox = null;
-    private CheckBox rememberbox2 = null;
-    public static int background_animation_switch = 1;
+    public int alarm=0;//警报状态
+
+    public static int background_animation_switch = 1;//0.关闭动画 1.开启动画
+    public static Server myServer = null;//TCP服务器操作
+    public static String TAG = "SocketService";//Debug标志
+
+    static Intent homepage_intent = new Intent("android.intent.action.HOMEPAGE");//Activity intent 用于界面切换
+    static Intent instrument_intent = new Intent("android.intent.action.INSTRUMENTLINESPLAN");
+    static Intent instrument_intent2 = new Intent("android.intent.action.INSTRUMENTMETERDIAGRAM");
+    static Intent control_intent = new Intent("android.intent.action.CONTROL");
+    static Intent warn_intent = new Intent("android.intent.action.WARN");
+    public static Button button1;//按钮
+    public static Button button2;
+    public static Button button3;
+    public static Button button4;
+    public static Button button5;
+    public static Button buttonselecthome;
+    public static Button buttonselectinstrument;
+    public static Button buttonselectcontrol;
+    private CheckBox rememberbox = null;//多选框 开关动画
+    private CheckBox rememberbox2 = null;//警报提醒
+    public TextView mTextMessage;
+    public TextView mTextMessage2;
+    //暂未处理
+    public static String alarm_contrast_information = "";//指令
+    public static int ACI_serial_number = 0;//指令
     public static DataOutputStream dos;
     public static String Threedata;
     public static int Threedata_flag=0;
 
-    public static Server myServer = null;//TCP服务器操作
-    public static String TAG="SocketService";
+
 
 
     @Override
@@ -154,8 +160,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             {
                 case AlertDialog.BUTTON_POSITIVE:// "确认"按钮退出程序
                     try {
-                        myServer.close();
-                        //TCP.close();//关闭连接
+                        TCP_reconnect = false;//跳出循环 取消重连
+                        myServer.close();//关闭服务器资源
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -196,6 +203,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rememberbox.setChecked(false); //监听对象1的初始状态
         rememberbox2 = (CheckBox) findViewById(R.id.dhremember2);//创建一个监听对象1
         rememberbox2.setChecked(true);//监听对象2的初始状态
+
         //如果第一个活动里"关闭动画"被按下时执行这里的代码
         rememberbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {//checkbox的监听事件语句是setOnCheckChangeListener
             @Override
@@ -207,6 +215,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         });
+        //"启动报警"
         rememberbox2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {//checkbox的监听事件语句是setOnCheckChangeListener
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -241,15 +250,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void run(){
 
-                while (true) {
-
+                while (TCP_reconnect) {
 
                     if (myServer.isConnected()) { //连接成功
                         Log.d(TAG, "服务器读取数据线程开启...");
 
                         try {
 
-                            while (myServer.isConnected()) { //循环读取数据并处理
+                            while (myServer.isConnected() && TCP_reconnect) { //循环读取数据并处理
                                 String msg=myServer.getServerMsg();
                                 Log.d(TAG, msg);
                                 CheckData1(msg);//解析处理数据函数
@@ -264,20 +272,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
 
                     try {
-                        MainActivity.LinkFlag = 0;
-                        mTextMessage.setText("服务器重新连接中...");
-                        myServer.connect();//重新连接Socket
-                        if (myServer.send(password)) { //发送安卓端连接密钥
+                        //MainActivity.LinkFlag = 0;
+                        if (TCP_reconnect) {
+                            mTextMessage.setText("服务器重新连接中...");
+                            myServer.connect();//重新连接Socket
+                            if (myServer.send(password)) { //发送安卓端连接密钥
 
-                            Log.e("SocketService", "TCP服务器连接成功");
-                            Log.d("SocketService", "send message to cilent ok");
-                            TCP_connection_status = 1;
-                            LinkFlag = 2;
+                                Log.e("SocketService", "TCP服务器连接成功");
+                                Log.d("SocketService", "send message to cilent ok");
+                                TCP_connection_status = 1;
+                                //LinkFlag = 2;
+                            }
                         }
 
                     } catch (Exception e) {
                         Log.e(TAG, "服务器重新连接异常"+e.toString());
                         mTextMessage.setText("服务器重新连接异常");
+                        TCP_connection_status = 0;
                     }
 
                     //3s防止断开socket刷新太快 单独捕获异常
@@ -525,8 +536,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             StringTokenizer st = new StringTokenizer(TCPReadData, "#");
             String[] str = new String[st.countTokens()];
             if (str[0].equals("Time:")&&str[2].equals("Begin")) {
-                Threedata = str[1];
-                Threedata_flag = 1;
+                //Threedata = str[1];
+               // Threedata_flag = 1;
             }
         }catch (Exception e){
         }
@@ -793,6 +804,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             });
         }
+
+        //开启背景动画
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (background_animation_switch==1) {
+                    vieNum += 3;
+                    Others.BackgroundAnimation(vie, vieNum);
+                }
+                if(vieNum>600){
+                    vieNum = 0;
+                }
+            }
+        });
+
+
     }
 
     //类似以下的字符传解析成hashmap

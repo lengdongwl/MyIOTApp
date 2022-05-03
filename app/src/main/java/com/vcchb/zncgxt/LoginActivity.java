@@ -204,13 +204,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             //Socket TCP = myServer.getSocket();//连接服务器
             //MainActivity.myServer = new MyServer(MainActivity.serversip, MainActivity.portnumber);
             if (myServer.isConnected()) { // TCP连接成功
-                MainActivity.LinkFlag = 0;
+                //MainActivity.LinkFlag = 0;
                 try {
                     if (myServer.send(MainActivity.password)) { //发送安卓端连接密钥
                         Log.e("SocketService", "TCP服务器连接成功");
                         Log.d("SocketService", "send message to cilent ok");
                         MainActivity.TCP_connection_status = 1;
-                        MainActivity.LinkFlag = 2;
+                        MainActivity.TCP_reconnect = true;
+                        //MainActivity.LinkFlag = 1;
                         MainActivity.myServer = myServer;
                         //MainActivity.TCP = TCP;
                         Thread.sleep(1000);//延迟效果才看得见显示内容

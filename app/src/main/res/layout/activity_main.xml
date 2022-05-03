@@ -85,7 +85,6 @@
         class="com.vcchb.zncgxt.CircleStatisticalView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/acback18"
 
         android:paddingLeft="90dp"
         android:paddingRight="90dp"
