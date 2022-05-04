@@ -96,6 +96,7 @@ class Server {
             //  ops.close();
         }catch (SocketException e)
         {
+            isConnected=false;
             return false; //发送失败
             //return "Connection reset by peer"; //需要重置连接
         }
@@ -149,7 +150,7 @@ class Server {
 
     //查看TCP是否连接状态
     public boolean isConnected() {
-        return isConnected && TCP.isConnected();
+        return isConnected ;//&& TCP.isConnected();
     }
 
 

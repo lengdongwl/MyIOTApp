@@ -189,7 +189,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void Initialize(){
-        setContentView(R.layout.activity_main);
+        if (TCP_connection_status == 1) {
+            setContentView(R.layout.activity_main);
+        }else
+        {
+            if (LoginActivity.isPad(this))
+            {
+                setContentView(R.layout.activity_login);
+            }else
+            {
+                setContentView(R.layout.activity_login_mobilephone);
+            }
+        }
+
         vie = findViewById(R.id.container);
         mTextMessage2 = (TextView) findViewById(R.id.readdata);
         mTextMessage = (Button) findViewById(R.id.message);
