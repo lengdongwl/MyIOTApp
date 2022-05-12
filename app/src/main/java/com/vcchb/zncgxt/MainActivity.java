@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static String serversip="110.40.223.237";//服务器ip
     public static int portnumber=8081;//服务器端口
     public static String password="Q1830011741";//连接服务器Android的key
+    public static String loginFlag = "OK12OK12";//登录成功返回的标志
     public static boolean root=false;//管理模式
     public static String message_sent = "cmd tempA";//连接状态下自动向服务器发送的指令
     public static int MS_serial_number = 1;//1.卧室 2.厨房 3.厕所当前页面索引
@@ -280,7 +281,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         Log.d(TAG, "服务器读取数据线程开启...");
 
                         try {
-
+                            myServer.send(loginFlag);
                             while (myServer.isConnected() && TCP_reconnect) { //循环读取数据并处理
                                 String msg=myServer.getServerMsg();
                                 Log.d(TAG, msg);
@@ -300,9 +301,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             mTextMessage.setText("服务器重新连接中...");
                             myServer.connect();//重新连接Socket
                             if (myServer.send(password)) { //发送安卓端连接密钥
-                                Log.e("SocketService", "TCP服务器连接成功");
-                                Log.d("SocketService", "send message to cilent ok");
-                                TCP_connection_status = 1;
+                                if (myServer.getServerMsg().equals(MainActivity.loginFlag)) {
+                                    Log.e("SocketService", "TCP服务器连接成功");
+                                    Log.d("SocketService", "send message to cilent ok");
+                                    TCP_connection_status = 1;
+                                }
                             }
                         }
 
@@ -477,6 +480,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case 0:
                 str = "安全";
                 break;
+            case 10:
+                str = "安全";
+                break;
             case 1:
                 str = "危险";
                 Warning[MS_serial_number-1]=Warning[MS_serial_number-1]+1;
@@ -520,8 +526,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if (cmdData.get("Add").equals("0xAA")) {
                                 markTop[0] = cmdData.get("Wd");//传感器指标数据
                                 markTop[1] = cmdData.get("Sd");
-                                markTop[2] = cmdData.get("Yw");
-                                markTop[3] = cmdData.get("Kq");
+                                //markTop[2] = (cmdData.get("Yw"));
+                                //markTop[3] = (cmdData.get("Kq"));
+                                markTop[2] = SafeState(cmdData.get("Yw"));
+                                markTop[3] = SafeState(cmdData.get("Kq"));
                                 markTop[4] = cmdData.get("Rt").equals("0") ? "无人" : "有人";
                                 lamp[0] = Integer.parseInt(Extractstr(cmdData.get("D")));//lamp[0] [1] [2] 卧室，厨房，厕所的灯亮灭状态
                                 alarm = Integer.parseInt(cmdData.get("alarm"));//警报
@@ -534,9 +542,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if (cmdData.get("Add").equals("0xBB")) {
                                 markTop[0] = cmdData.get("Wd");
                                 markTop[1] = cmdData.get("Sd");
-                                markTop[2] = cmdData.get("Yw");
-                                markTop[3] = cmdData.get("Qt");
-                                markTop[4] = cmdData.get("Hy");
+                                //markTop[2] = (cmdData.get("Yw"));
+                                //markTop[3] = (cmdData.get("Qt"));
+                                //markTop[4] = (cmdData.get("Hy"));
+                                markTop[2] = SafeState(cmdData.get("Yw"));
+                                markTop[3] = SafeState(cmdData.get("Qt"));
+                                markTop[4] = SafeState(cmdData.get("Hy"));
                                 lamp[1] = Integer.parseInt(Extractstr(cmdData.get("D")));
                                 alarm = Integer.parseInt(cmdData.get("alarm"));//警报
                                 curtain = Integer.parseInt(cmdData.get("Cl"));//窗帘
@@ -548,7 +559,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if (cmdData.get("Add").equals("0xCC")) {
                                 markTop[0] = cmdData.get("Wd");
                                 markTop[1] = cmdData.get("Sd");
-                                markTop[2] = cmdData.get("Kq");
+                                //markTop[2] = (cmdData.get("Kq"));
+                                markTop[2] = SafeState(cmdData.get("Kq"));
                                 lamp[2] = Integer.parseInt(Extractstr(cmdData.get("D")));
                                 alarm = Integer.parseInt(cmdData.get("alarm"));//警报
                                 curtain = Integer.parseInt(cmdData.get("Cl"));//窗帘

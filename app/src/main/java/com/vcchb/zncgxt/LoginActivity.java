@@ -207,17 +207,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 //MainActivity.LinkFlag = 0;
                 try {
                     if (myServer.send(MainActivity.password)) { //发送安卓端连接密钥
-                        Log.e("SocketService", "TCP服务器连接成功");
-                        Log.d("SocketService", "send message to cilent ok");
-                        MainActivity.TCP_connection_status = 1;
-                        MainActivity.TCP_reconnect = true;
-                        MainActivity.myServer = myServer;
-                        Thread.sleep(1000);//延迟效果才看得见显示内容
-                        dialogShow("服务器连接成功...");
-                        myServer = null;
+                        if (myServer.getServerMsg().equals(MainActivity.loginFlag)) {
+                            Log.e("SocketService", "TCP服务器连接成功");
+                            Log.d("SocketService", "send message to cilent ok");
+                            MainActivity.TCP_connection_status = 1;
+                            MainActivity.TCP_reconnect = true;
+                            MainActivity.myServer = myServer;
+                            Thread.sleep(1000);//延迟效果才看得见显示内容
+                            dialogShow("服务器连接成功...");
+                            myServer = null;
 
-                        Thread.sleep(1000);
-                        startActivity(new Intent(LoginActivity.this, MainActivity.class));//切换活动窗口
+                            Thread.sleep(1000);
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));//切换活动窗口
+                        }else
+                        {
+                            Log.e("SocketService", "TCP服务器密钥不正确");
+                            dialogShow("TCP服务器密钥不正确...");
+                        }
                     }
                 } catch (Exception E) {
                     MainActivity.TCP_connection_status = 0;
